@@ -1,15 +1,13 @@
-
-
 """
-    OneSidedBook{Sz,Px,Oid,Aid} 
-    
-One-Sided book with order-id type Oid, account-id type Aid, 
+    OneSidedBook{Sz,Px,Oid,Aid}
+
+One-Sided book with order-id type Oid, account-id type Aid,
 size type Sz and price type Px.
 
-OneSidedBook is a one-sided book (i.e. :BID or :ASK) of order queues at 
-varying prices. 
+OneSidedBook is a one-sided book (i.e. :BID or :ASK) of order queues at
+varying prices.
 
-OrderQueues are stored in an AVLTree (.book) indexed 
+OrderQueues are stored in an AVLTree (.book) indexed
 either by price (ASK side) or -price (BID side)
 
 The book keeps track of various statistics such as the current best price,
@@ -188,5 +186,3 @@ function pop_order!(
         return nothing
     end
 end
-
-

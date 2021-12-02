@@ -1,5 +1,3 @@
-
-
 begin # Create (Deterministic) Limit Order Generator
     MyOrderSubTypes = (Int64,Float32,Int64,Int64) # define types for Order Size, Price, Order IDs, Account IDs
     MyOrderType = Order{MyOrderSubTypes...}
@@ -59,7 +57,7 @@ end
     ob = MyLOBType() #Initialize empty book
     # record order book info before
     order_lst_tmp = Base.Iterators.take( Base.Iterators.filter( x-> x[4]===BUY_ORDER, lmt_order_info_iter), 7 ) |> collect
-    
+
     # Add a bunch of orders
     for (orderid, price, size, side) in order_lst_tmp
         submit_limit_order!(ob,orderid,side,price,size)
@@ -70,12 +68,12 @@ end
     # record information from before
     expected_bid_volm_before = sum( x[3] for x in order_lst_tmp )
     expected_bid_n_orders_before =  length(order_lst_tmp)
-    
+
 
     # execute MO
     mo_matches, mo_ltt = submit_market_order!(ob,SELL_ORDER,30)
     mo_match_sizes = [o.size for o in mo_matches]
-    
+
     # record what is expected to be seen
     expected_bid_volm_after = expected_bid_volm_before - 30
     expected_bid_n_orders_after = expected_bid_n_orders_before - 5
@@ -83,13 +81,13 @@ end
 
     # record what is expected of MO result
     expected_mo_match_size = [5,15,6,1,2,1]
-    
+
     # Compute realized values
     book_info_after = book_depth_info(ob,1000)
     realized_bid_volm_after  = sum(book_info_after[:BID][:volume])
     realized_bid_n_orders_after = sum(book_info_after[:BID][:orders])
     realized_best_bid_after = first(book_info_after[:BID][:price])
-    
+
     # Check all expected vs realized values
     @test realized_bid_volm_after == expected_bid_volm_after
     @test realized_bid_n_orders_after == expected_bid_n_orders_after
@@ -146,7 +144,7 @@ end
     for (orderid, price, size, side) in take(lmt_order_info_iter,100)
         submit_limit_order!(ob,orderid,side,price,size)
     end
-    
+
     # Add order with an account ID
     acct_id = 1313
     order_id0 = 10001
@@ -175,31 +173,32 @@ end
 
 end
 
+import Pkg;
+Pkg.add("BenchmarkTools")
+using BenchmarkTools
+# Add a bunch of orders
 
-# using BenchmarkTools
-# # Add a bunch of orders
+ob = MyLOBType() #Initialize empty book
 
-# ob = MyLOBType() #Initialize empty book
+order_info_lst = take(lmt_order_info_iter,Int64(10_000)) |> collect
+for (orderid, price, size, side) in order_info_lst
+    submit_limit_order!(ob,orderid,side,price,size)
+end
 
-# order_info_lst = take(lmt_order_info_iter,Int64(10_000)) |> collect
-# for (orderid, price, size, side) in order_info_lst
-#     submit_limit_order!(ob,orderid,side,price,size)
-# end
+(orderid, price, size, side), _ =  Iterators.peel(lmt_order_info_iter)
+@benchmark submit_limit_order!($ob,$orderid,$side,$price,$size,)
+@benchmark (submit_market_order!($ob,BUY_ORDER,1000);)
 
-# (orderid, price, size, side), _ =  Iterators.peel(lmt_order_info_iter)
-# @benchmark submit_limit_order!($ob,$orderid,$side,$price,$size,)
-# @benchmark (submit_market_order!($ob,BUY_ORDER,1000);)
-
-# @code_typed submit_limit_order!(ob,orderid,side,price,size)
+@code_typed submit_limit_order!(ob,orderid,side,price,size)
 
 
-# ob = MyLOBType() # initialize order book
+ob = MyLOBType() # initialize order book
 
-# # fill book with random limit orders
-# randspread() = ceil(-0.03*log(rand()),digits=2)
-# for i=1:1000
-#     submit_limit_order!(ob,2i,BUY_ORDER,99.0-randspread(),rand(1:25))
-#     submit_limit_order!(ob,3i,SELL_ORDER,99.0+randspread(),rand(1:25))
-# end
+# fill book with random limit orders
+randspread() = ceil(-0.03*log(rand()),digits=2)
+for i=1:1000
+    submit_limit_order!(ob,2i,BUY_ORDER,99.0-randspread(),rand(1:25))
+    submit_limit_order!(ob,3i,SELL_ORDER,99.0+randspread(),rand(1:25))
+end
 
-# @benchmark submit_limit_order!(ob,$2,$(rand([BUY_ORDER,SELL_ORDER])),$(99.0+rand([1,-1])*randspread()),$(rand(1:25)))
+@benchmark submit_limit_order!(ob,$2,$(rand([BUY_ORDER,SELL_ORDER])),$(99.0+rand([1,-1])*randspread()),$(rand(1:25)))

@@ -1,3 +1,7 @@
+import Pkg;
+Pkg.add("AVLTrees")
+Pkg.add("Printf")
+Pkg.add("UnicodePlots")
 module LimitOrderBook
 using AVLTrees
 using Base: @kwdef

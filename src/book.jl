@@ -4,9 +4,9 @@ using Base: show, print, popfirst!
 """
     AcctMap{Sz,Px,Oid,Aid}
 
-Collection of open orders by account. 
+Collection of open orders by account.
 
-`(Sz,Px,Oid,Aid)` characterize the type of Order present in the `AcctMap`. 
+`(Sz,Px,Oid,Aid)` characterize the type of Order present in the `AcctMap`.
 See documentation on [`Order`](@ref) for more information on the meaning of types.
 
 The account map is implemented as a `Dict` containing `AVLTree`s.
@@ -44,9 +44,10 @@ See documentation on [`Order`](@ref) for more information on this type.
 
 How to use `Orderbook`:
  - Initialize an empty limit order book as `OrderBook{Sz,Px,Oid,Aid}()`
- - __Submit__ or __cancel__ limit orders with [`submit_limit_order!`](@ref) and [`cancel_order!`](@ref). 
+ - __Submit__ or __cancel__ limit orders with [`submit_limit_order!`](@ref) and [`cancel_order!`](@ref).
  - Submit __market orders__ with [`submit_market_order!`](@ref)
- - Retrieve order book state information with `print` or `show` methods, as well as [`book_depth_info`](@ref), [`best_bid_ask`](@ref), [`volume_bid_ask`](@ref), [`n_orders_bid_ask`](@ref) and [`get_acct`](@ref)
+ - Retrieve order book state information with `print` or `show` methods, as well as [`book_depth_info`](@ref),
+ [`best_bid_ask`](@ref), [`volume_bid_ask`](@ref), [`n_orders_bid_ask`](@ref) and [`get_acct`](@ref)
  - Write book state to `csv` file with [`write_csv`](@ref).
 
 """
@@ -113,7 +114,7 @@ end
 """
     book_depth_info(ob::OrderBook, max_depth=5)
 
-Returns prices, volumes and order counts at bid and ask in `ob::OrderBook` 
+Returns prices, volumes and order counts at bid and ask in `ob::OrderBook`
 until fixed depth `max_depth` as a nested `Dict`.
 """
 function book_depth_info(ob::OrderBook, max_depth=5)

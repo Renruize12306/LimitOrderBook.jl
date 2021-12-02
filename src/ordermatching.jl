@@ -1,4 +1,3 @@
-
 """
     submit_limit_order!(
         ob::OrderBook{Sz,Px,Oid,Aid},
@@ -14,9 +13,9 @@ Enter limit order with size `limit_size`, price `limit_price` with `side::OrderS
 If an account if `acct_id` is provided, account holdings are tracked in `ob.acct_map`.
 
 Order execution logic can be modified according to the argument `fill_mode::`[`OrderTraits`](@ref) which
-defaults to `fill_mode=VANILLA_FILLTYPE`, representing the default order matching mode. 
+defaults to `fill_mode=VANILLA_FILLTYPE`, representing the default order matching mode.
 
-`submit_limit_order!` returns tuple of 
+`submit_limit_order!` returns tuple of
  - `new_open_order::Order` representing the order left in the book after matching. Is `nothing` if no order was inserted
  - `order_match_lst::Vector{Order}` representing the matched orders if the order crosses the book.
  - `left_to_trade::Sz` representing the size of the portion of the order which could neither inserted nor matched.
@@ -112,7 +111,7 @@ end
         order_mode::OrderTraits,
     )
 
-Cross (limit or market) order with opposite single side of book. 
+Cross (limit or market) order with opposite single side of book.
 Order size is specified in number of shares.
 Return matches and outstanding size.
 
@@ -142,7 +141,7 @@ function _walk_order_book_bysize!(
             append!(order_match_lst, price_queue.queue) # Add all of the orders to the match list
             shares_left -= price_queue.total_volume[] # decrement what's left to trade
         else
-            while !isempty(price_queue) && !iszero(shares_left) # while not done and queue not empty 
+            while !isempty(price_queue) && !iszero(shares_left) # while not done and queue not empty
                 best_ord::Order = popfirst!(price_queue) # pop out best order
                 if shares_left >= best_ord.size # Case 1: Limit order gets wiped out
                     # Add best_order to match list & decrement outstanding MO
@@ -169,7 +168,7 @@ function _walk_order_book_bysize!(
 end
 
 """
-Fill market order by walking the book using Price/Arrival priority. 
+Fill market order by walking the book using Price/Arrival priority.
 __This version walks the book with funds rather than trade size.__
 """
 function _walk_order_book_byfunds!(
@@ -193,7 +192,7 @@ function _walk_order_book_byfunds!(
             append!(order_match_lst, price_queue.queue) # Add all of the orders to the match list
             funds_left -= price_queue.total_volume[] * price_queue.price # decrement what's left to trade
         else
-            while !isempty(price_queue) && !iszero(funds_left) # while not done and queue not empty 
+            while !isempty(price_queue) && !iszero(funds_left) # while not done and queue not empty
                 best_ord::Order = popfirst!(price_queue) # pop out best order
                 if funds_left >= (best_ord.size * best_ord.price) # Case 1: Limit order gets wiped out
                     # Add best_order to match list & decrement outstanding MO
@@ -220,7 +219,7 @@ function _walk_order_book_byfunds!(
 end
 
 """
-    submit_market_order!(ob::OrderBook,side::OrderSide,mo_size[,fill_mode::OrderTraits]) 
+    submit_market_order!(ob::OrderBook,side::OrderSide,mo_size[,fill_mode::OrderTraits])
 
 Submit market order to `ob::OrderBook` with `side::OrderSide` and size `mo_size`.
 Optionally `fill_mode::OrderTraits` may be provided to modify fill logic.
@@ -250,13 +249,13 @@ function submit_market_order!(
 end
 
 """
-    submit_market_order_byfunds!(ob::OrderBook,side::Symbol,funds[,mode::OrderTraits]) 
+    submit_market_order_byfunds!(ob::OrderBook,side::Symbol,funds[,mode::OrderTraits])
 
 Submit market order to `ob::OrderBook` `side::OrderSide` and available funds `funds::Real`.
 Optionally `fill_mode::OrderTraits` may be provided to modify fill logic.
 Market orders are filled by price-time priority.
 
-Functionality is exactly the same as `submit_market_order!` except _available funds_ (max total price paid on order) 
+Functionality is exactly the same as `submit_market_order!` except _available funds_ (max total price paid on order)
 is provided, rather than _number of shares_ (order size).
 
 Returns tuple `( ord_lst::Vector{Order}, funds_leftover )`

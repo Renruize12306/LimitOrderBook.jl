@@ -1,5 +1,3 @@
-
-
 # Define Order Fill mode and utilities
 """
     OrderTraits(allornone::Bool,immediateorcancel::Bool,allow_cross::Bool)
@@ -11,7 +9,7 @@ An instance can be initialized by using the keyword intializer or by using the e
 
 The default execution logic is represented by `VANILLA_FILLTYPE`.
 
-__Note:__ This feature is not well supported yet. 
+__Note:__ This feature is not well supported yet.
 Other than the constants described above, use non-vanilla modes with caution.
 
 """
@@ -76,13 +74,13 @@ An `Order{Sz<:Real,Px<:Real,Oid<:Integer,Aid<:Integer}` is a struct representing
  - `orderid::Oid`, a unique Order ID
  - (optional) `acctid::Union{Aid,Nothing}`, which is set to nothing if the account is unknown or irrelevant.
 
-One can create a new `Order` as 
+One can create a new `Order` as
 
 ```
 Order{Sz,Px,Pid,Aid}(side, size, price, orderid, order_mode [,acctid=nothing])
 ```
 
-where the types of `size` and `price` will be cast to the correct types. 
+where the types of `size` and `price` will be cast to the correct types.
 The `orderid` and `acctid` types will not be cast in order to avoid ambiguity.
 """
 struct Order{Sz<:Real,Px<:Real,Oid<:Integer,Aid<:Integer}
