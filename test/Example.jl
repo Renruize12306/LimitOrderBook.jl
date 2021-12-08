@@ -1,12 +1,12 @@
 import Pkg;
 Pkg.add(path="../LimitOrderBook.jl")
 # adding package
-using LimitOrderBook
+using LimitOrderBook, Random
 
 # initiallize a struct && its data type
 MyLOBType = OrderBook{Int64,Float32,Int64,Int64} # define LOB type
 ob = MyLOBType() # initialize order book
-
+Random.seed!(404)
 # fill book with random limit orders
 randspread() = ceil(-0.05*log(rand()),digits=2)
 # rand() Generating something else than one float from [0, 1[ interval
